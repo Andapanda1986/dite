@@ -20,3 +20,5 @@
 14.04. 21:23 | Matouš: Chyba serveru 400
 14.04. 21:24 | Oliver: API chyba (400)
 14.04. 21:24 | Matouš: API chyba (400)
+14.04. 21:26 | Oliver: Nenalezeno na 1. straně (zkuste pagenum)
+14.04. 21:26 | Matouš: Nenalezeno na 1. straně (zkuste pagenum)
