@@ -1,0 +1,27 @@
+YAML
+name: Hlidac Hlasu
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Tohle říká robotovi: Zkus to každých 5 minut
+  workflow_dispatch:        # Tohle ti tam přidá to spouštěcí tlačítko
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: pip install requests beautifulsoup4
+      - run: python bot.py
+      - name: Uložit log
+        run: |
+          git config --global user.name 'Sledovaci Robot'
+          git config --global user.email 'robot@github.com'
+          git add log_hlasu.txt
+          git commit -m "Aktualizace hlasů" || exit 0
+          git push
