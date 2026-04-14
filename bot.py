@@ -1,9 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
 import re
 from datetime import datetime
 
-# Nastavení jmen a ID
+# ID a jména
 FOTKY = {
     "25583": "Oliver",
     "25017": "Matouš"
@@ -18,30 +17,32 @@ def hlidej():
     zapis_text = ""
 
     for photo_id, jmeno in FOTKY.items():
-        # Zkusíme hledat přímo přes vyhledávací parametr webu
-        search_url = f"https://diteajacasopis.cz/top-100/?_s={photo_id}"
-        print(f"Hledám {jmeno} (ID {photo_id})...")
+        # Zkusíme přímo vyhledávací stránku, která vrací nejméně zbytečností
+        url = f"https://diteajacasopis.cz/top-100/?_s={photo_id}"
         
         try:
-            r = requests.get(search_url, headers=headers, timeout=20)
-            soup = BeautifulSoup(r.text, "html.parser")
+            r = requests.get(url, headers=headers, timeout=20)
+            html_kod = r.text
             
-            # Hledáme tu tvoji známou značku s hlasy
-            vysledek = soup.find("span", {"data-post": photo_id, "class": "jet-engine-data-post-count"})
+            # Hledáme číslo, které je v těsné blízkosti tvého ID v tom skrytém JetEngine kódu
+            # Hledáme vzor: data-post="25017">ČÍSLO</span>
+            vzor = rf'data-post="{photo_id}"[^>]*>(\d+)<\/span>'
+            najito = re.search(vzor, html_kod)
             
-            if vysledek:
-                pocet = vysledek.get_text(strip=True)
+            if najito:
+                pocet = najito.group(1)
                 zapis_text += f"{cas} | {jmeno}: {pocet} hlasů\n"
-                print(f"--- Najito: {pocet}")
+                print(f"--- {jmeno}: Najito {pocet}")
             else:
-                # Záložní pokus - najít jakékoliv číslo u slova hlas na této stránce
-                text_stranky = soup.get_text(" ", strip=True)
-                najit_cislo = re.search(r"(\d+)\s*hlas", text_stranky)
-                if najit_cislo:
-                    zapis_text += f"{cas} | {jmeno}: {najit_cislo.group(1)} hlasů\n"
+                # Druhý pokus: Hledáme jakékoliv číslo u slova "post-count" a tvého ID
+                vzor_zalozni = rf'post="{photo_id}".*?(\d+)'
+                najito_zalozni = re.search(vzor_zalozni, html_kod, re.DOTALL)
+                if najito_zalozni:
+                    pocet = najito_zalozni.group(1)
+                    zapis_text += f"{cas} | {jmeno}: {pocet} hlasů (záloha)\n"
                 else:
-                    zapis_text += f"{cas} | {jmeno}: Nenalezeno (ani přes hledání)\n"
-        
+                    zapis_text += f"{cas} | {jmeno}: Číslo nenalezeno (web ho skrývá)\n"
+                    
         except Exception as e:
             zapis_text += f"{cas} | {jmeno}: Chyba: {e}\n"
 
