@@ -1,10 +1,8 @@
-YAML
-name: Hlidac Hlasu
-
+name: Hlidac
 on:
+  workflow_dispatch:
   schedule:
     - cron: '*/5 * * * *'
-  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -18,10 +16,9 @@ jobs:
           python-version: '3.10'
       - run: pip install requests beautifulsoup4
       - run: python bot.py
-      - name: Ulozit log
-        run: |
-          git config --global user.name 'Sledovaci Robot'
+      - run: |
+          git config --global user.name 'Robot'
           git config --global user.email 'robot@github.com'
           git add log_hlasu.txt
-          git commit -m "Aktualizace hlasu" || exit 0
+          git commit -m "update" || exit 0
           git push
