@@ -22,3 +22,5 @@
 14.04. 21:24 | Matouš: API chyba (400)
 14.04. 21:26 | Oliver: Nenalezeno na 1. straně (zkuste pagenum)
 14.04. 21:26 | Matouš: Nenalezeno na 1. straně (zkuste pagenum)
+14.04. 21:27 | Oliver: Na straně 1 ho nevidím
+14.04. 21:27 | Matouš: 390 hlasů
