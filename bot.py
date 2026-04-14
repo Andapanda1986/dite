@@ -1,16 +1,13 @@
-Python
 import requests
 from bs4 import BeautifulSoup
 import re
 from datetime import datetime
 
-# === TADY ZMĚŇ JEN TYTO ÚDAJE (čísla z HTML a jména) ===
+# === NASTAVENÍ ===
 FOTKY = {
-    "25583": "Oliver",    # První číslo fotky a jméno
-    "25017": "já"    # Druhé číslo fotky a jméno
+    "25583": "Oliver",
+    "25017": "já"
 }
-# ======================================================
-
 URL = "https://diteajacasopis.cz/top-100/"
 LOG_FILE = "log_hlasu.txt"
 
@@ -22,15 +19,12 @@ def hlidej():
         cas = datetime.now().strftime("%d.%m. %H:%M")
         zapis_text = ""
 
-        # Robot projde obě ID jedno po druhém
         for photo_id, jmeno in FOTKY.items():
-            # Najde blok fotky (podle ID ve zdrojáku)
+            # Hledáme div, který obsahuje dané ID
             block = soup.find(attrs={"data-id": photo_id}) or soup.find(id=re.compile(photo_id))
             
             if block:
-                # Robot přečte text v okolí té fotky
                 cely_text = block.get_text(" ", strip=True)
-                # Hledá číslo před slovem 'hlas'
                 najit_cislo = re.search(r"(\d+)\s*hlas", cely_text)
                 
                 if najit_cislo:
@@ -41,13 +35,12 @@ def hlidej():
             else:
                 zapis_text += f"{cas} | {jmeno}: ID {photo_id} na stránce nevidím\n"
 
-        # Uložíme výsledek do souboru log_hlasu.txt
         with open(LOG_FILE, "a", encoding="utf-8") as f:
             f.write(zapis_text)
-        print("Robot úspěšně zkontroloval hlasy.")
+        print("Hotovo.")
 
     except Exception as e:
-        print(f"Něco se pokazilo: {e}")
+        print(f"Chyba: {e}")
 
 if __name__ == "__main__":
     hlidej()
