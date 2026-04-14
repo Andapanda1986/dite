@@ -1,8 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
-import re
+import json
 from datetime import datetime
 
+# ID a jména
 FOTKY = {
     "25583": "Oliver",
     "25017": "Matouš"
@@ -10,49 +10,42 @@ FOTKY = {
 LOG_FILE = "log_hlasu.txt"
 
 def hlidej():
+    # Tento odkaz je "mozek" jejich databáze
+    api_url = "https://diteajacasopis.cz/wp-admin/admin-ajax.php"
+    
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
     }
+    
     cas = datetime.now().strftime("%d.%m. %H:%M")
     zapis_text = ""
 
     for photo_id, jmeno in FOTKY.items():
-        # Použijeme přímé hledání, které nám minule aspoň odpovědělo
-        url = f"https://diteajacasopis.cz/top-100/?_s={photo_id}"
+        # Tyhle parametry jsem vytáhl přímo z jejich systému
+        payload = {
+            "action": "jet_engine_get_posts_count",
+            "store": "oblibene",
+            "post_id": photo_id
+        }
         
         try:
-            r = requests.get(url, headers=headers, timeout=20)
-            soup = BeautifulSoup(r.text, "html.parser")
+            # Musíme to poslat jako POST požadavek
+            r = requests.post(api_url, data=payload, headers=headers, timeout=20)
             
-            # Najdeme ten velký blok, co jsi mi poslala (obsahuje ID fotky)
-            blok = soup.find(attrs={"data-post-id": photo_id})
-            
-            if blok:
-                # V tomto bloku najdeme tu specifickou třídu pro hlasy
-                span_hlasy = blok.find("span", class_="jet-engine-data-post-count")
-                if span_hlasy:
-                    pocet = span_hlasy.get_text(strip=True)
+            if r.status_code == 200:
+                res_data = r.json()
+                # Odpověď vypadá jako {"success":true,"data":{"count":"390"}}
+                if res_data.get("success"):
+                    pocet = res_data["data"]["count"]
+                    zapis_text += f"{cas} | {jmeno}: {pocet} hlasů\n"
+                    print(f"Úspěch: {jmeno} má {pocet} hlasů")
                 else:
-                    # Pokud tam není span, zkusíme najít jakékoliv číslo u slova hlas v tom bloku
-                    text_bloku = blok.get_text(" ", strip=True)
-                    najit = re.search(r"(\d+)\s*hlas", text_bloku)
-                    pocet = najit.group(1) if najit else "???"
-                
-                zapis_text += f"{cas} | {jmeno}: {pocet} hlasů\n"
-                print(f"--- {jmeno}: {pocet}")
+                    zapis_text += f"{cas} | {jmeno}: Web odmítl vydat data\n"
             else:
-                # Pokud nenajde blok, zkusí aspoň prohledat celou stránku na tvé ID
-                cely_web = soup.get_text(" ", strip=True)
-                # Hledáme číslo, které je blízko tvého jména nebo ID
-                vzor = rf"{photo_id}.*?(\d+)\s*hlas"
-                najito = re.search(vzor, cely_web, re.IGNORECASE)
-                if najito:
-                    zapis_text += f"{cas} | {jmeno}: {najito.group(1)} hlasů (odhad)\n"
-                else:
-                    zapis_text += f"{cas} | {jmeno}: Nenalezeno na webu\n"
-                    
+                zapis_text += f"{cas} | {jmeno}: Chyba serveru {r.status_code}\n"
         except Exception as e:
-            zapis_text += f"{cas} | {jmeno}: Chyba: {e}\n"
+            zapis_text += f"{cas} | {jmeno}: Chyba: {str(e)}\n"
 
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(zapis_text)
