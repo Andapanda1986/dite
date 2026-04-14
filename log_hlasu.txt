@@ -14,3 +14,5 @@
 14.04. 21:18 | Matouš: Číslo nenalezeno (web ho skrývá)
 14.04. 21:20 | Oliver: API chyba (400)
 14.04. 21:20 | Matouš: API chyba (400)
+14.04. 21:21 | Oliver: Nenalezeno na webu
+14.04. 21:21 | Matouš: Nenalezeno na webu
