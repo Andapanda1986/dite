@@ -7587,3 +7587,8 @@
 07. 05. 02:44 | Oliv: 2926 hlasů
 07. 05. 02:44 | Oliver: 583 hlasů
 07. 05. 02:44 | Ruzova: 6700 hlasů
+# SOURCE: cloudflare-worker | 07. 05. 02:54
+07. 05. 02:54 | Matouš: 5904 hlasů
+07. 05. 02:54 | Oliv: 2926 hlasů
+07. 05. 02:54 | Oliver: 583 hlasů
+07. 05. 02:54 | Ruzova: 6700 hlasů
