@@ -13573,3 +13573,8 @@
 12. 10. 19:13 | Oliv: Nenalezeno hlasů
 12. 10. 19:13 | Oliver: Nenalezeno hlasů
 12. 10. 19:13 | Ruzova: Nenalezeno hlasů
+# SOURCE: cloudflare-worker | 12. 10. 19:24
+12. 10. 19:24 | Matouš: Nenalezeno hlasů
+12. 10. 19:24 | Oliv: Nenalezeno hlasů
+12. 10. 19:24 | Oliver: Nenalezeno hlasů
+12. 10. 19:24 | Ruzova: Nenalezeno hlasů
