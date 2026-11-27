@@ -5723,3 +5723,8 @@
 27. 11. 19:54 | Oliv: Nenalezeno hlasů
 27. 11. 19:54 | Oliver: Nenalezeno hlasů
 27. 11. 19:54 | Ruzova: Nenalezeno hlasů
+# SOURCE: cloudflare-worker | 27. 11. 20:04
+27. 11. 20:04 | Matouš: Nenalezeno hlasů
+27. 11. 20:04 | Oliv: Nenalezeno hlasů
+27. 11. 20:04 | Oliver: Nenalezeno hlasů
+27. 11. 20:04 | Ruzova: Nenalezeno hlasů
